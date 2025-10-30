@@ -3,7 +3,7 @@ from xbtutils import database
 dbfile = "xbtData.db"
 
 # # Create database report and optionally export as a text file
-# database.database_summary(dbfile, outputDir="output", fname="myreport.txt", export=True)
+database.database_summary(dbfile, start_date="2025-01-01", end_date="2025-03-01",outputDir="output", fname="myreport.txt", export=False)
 
 # # read all database tables in raw format
 # database.read_database_all(dbfile, 3)
@@ -22,5 +22,5 @@ dbfile = "xbtData.db"
 
 # # The most complete filter. Read database filtering by callsign, shipname, soop line, rider, dates and optionally export a json file for each entry
 # Use wildcard '%' for incomplete strings i.e. 'A%' filters all variable values starting in 'A'
-database.read_database_filtered(dbfile, callsign = "%", shipname = "%", soopline = "AX07", ridername = "%", 
-                                date_start="2025-01-01", date_end="2025-10-31", export_json=True, response_limit=100)
+# database.read_database_filtered(dbfile, callsign = "%", shipname = "%", soopline = "AX07", ridername = "%", 
+#                                 date_start="2025-01-01", date_end="2025-10-31", export_json=True, response_limit=100)

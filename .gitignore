@@ -3,4 +3,7 @@
 # notebook
 *.ipynb
 # database
-_*.db
+*.db
+# python complilation
+xbtutils/__pycache__/
+xbtweb/__pycache__/

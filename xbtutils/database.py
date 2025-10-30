@@ -245,7 +245,7 @@ def database_to_json(dict_list):
 
 
 # reads database and generates a grouped report by soopline, callsign and year-month
-def database_summary(dbfile, outputDir = "output", fname = "report.txt", export = False):
+def database_summary(dbfile, start_date = "1900-01-01", end_date = "2100-01-01", show = True, outputDir = "output", fname = "report.txt", export = False):
     print("> XBT DATABASE SUMMARY:\r\n")
     conn = sql.connect(dbfile)
     dbc = conn.cursor()
@@ -254,10 +254,11 @@ def database_summary(dbfile, outputDir = "output", fname = "report.txt", export 
         SELECT main.soopLine,strftime('%Y-%m', main.datetime) AS year_month,main.callSign,vessel.shipName,main.riderName,main.transectNumber,COUNT(main.fileName) AS profiles,MIN(main.datetime) AS date_start,MAX(main.datetime) as date_end
         FROM main
         JOIN vessel ON main.callSign = vessel.callSign
+        WHERE main.datetime BETWEEN ? AND ?
         GROUP BY main.soopLine,year_month,main.callSign,main.transectNumber 
         ORDER BY main.soopLine,year_month ASC """
     try:
-        res = dbc.execute(COMMAND)
+        res = dbc.execute(COMMAND, (start_date, end_date))
         dictionary_list = query_to_dict(res)    
         columns = list(dictionary_list[0].keys())
         TEXT = ""
@@ -277,16 +278,21 @@ def database_summary(dbfile, outputDir = "output", fname = "report.txt", export 
                 else:
                     # print(dictionary[col], end=',')
                     TEXT = TEXT + str(dictionary[col]) + ","
-        print(TEXT)
-        print("\r\n")
+        # display report on screen
+        if show == True:
+            print(TEXT)
+            print("\r\n")
         print("> All read\r\n") 
     except Exception as e:
         print("> ERROR: database query could not be done! >>", e)
+        TEXT = f"WARNING: No results found for the date range specified: {start_date} : {end_date}"
 
     if export == True:
         export_text_to_file(TEXT, outputDir, fname)
 
     conn.close()
+
+    return TEXT
 
 
 # converts an sqlite select response to a dictionary
